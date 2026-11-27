@@ -1,6 +1,9 @@
 # Environments
 .env
+.env.*
+!.env.example
 .venv
+.venv/
 env/
 venv/
 ENV/
@@ -12,6 +15,19 @@ __pycache__/
 *.py[cod]
 *$py.class
 .Python
+
+# Linter, test, and coverage caches
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -25,6 +41,9 @@ hasil_preprocessing.xlsx
 
 # Saved Machine Learning Models
 *.pkl
+*.joblib
+artifacts/
+models/
 svm_sentiment_model.pkl
 tfidf_vectorizer.pkl
 
