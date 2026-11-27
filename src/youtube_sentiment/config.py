@@ -65,7 +65,10 @@ def configure_logging(level: str | None = None) -> None:
     Args:
         level: Optional logging level override (e.g., ``INFO``, ``DEBUG``).
     """
-    resolved_level_name = (level or os.getenv("LOG_LEVEL", "INFO")).strip().upper()
+    raw_level = (
+        level if (level is not None and level.strip()) else (os.getenv("LOG_LEVEL") or "INFO")
+    )
+    resolved_level_name = raw_level.strip().upper()
     resolved_level = getattr(logging, resolved_level_name, logging.INFO)
     root_logger = logging.getLogger()
     if not root_logger.handlers:

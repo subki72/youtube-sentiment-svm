@@ -271,9 +271,11 @@ def create_app(
     state: dict[str, SentimentClassifier | None] = {"classifier": classifier}
 
     def resolve_classifier() -> SentimentClassifier:
-        if state["classifier"] is None:
-            state["classifier"] = get_or_train_default_classifier(active_settings.model_path)
-        return state["classifier"]
+        resolved = state["classifier"]
+        if resolved is None:
+            resolved = get_or_train_default_classifier(active_settings.model_path)
+            state["classifier"] = resolved
+        return resolved
 
     _register_exception_handlers(application)
     _register_routes(application, active_settings, resolve_classifier, rate_limiter)
