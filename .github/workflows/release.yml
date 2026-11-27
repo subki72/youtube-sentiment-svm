@@ -1,0 +1,45 @@
+name: Release Pipeline
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release-package:
+    name: Verify, Package & Publish Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies & Build Tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt build
+
+      - name: Run Automated Test Suite
+        run: python -m pytest tests/ -v --cov=src --cov-fail-under=75
+
+      - name: Build Wheel & Source Distribution
+        run: python -m build
+
+      - name: Build Release Container Image
+        run: docker build -t youtube-sentiment-svm:${{ github.ref_name }} .
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
